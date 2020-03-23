@@ -18,14 +18,14 @@ public class EvolutionaryAlgorithm {
   private final double mutatePercentage;
   private final int tour;
 
-  public EvolutionaryAlgorithm(List<City> cities, int populationSize, int numberOfPopulation, double elitePercentage, double crossPercentage, double mutatePercentage, int tour, BufferedWriter writer) {
+  public EvolutionaryAlgorithm(List<City> cities, Params params, BufferedWriter writer) {
     this.cities = cities;
-    this.populationSize = populationSize;
-    this.numberOfPopulation = numberOfPopulation;
-    this.crossPercentage = crossPercentage;
-    this.mutatePercentage = mutatePercentage;
-    this.tour = tour;
-    this.elitePercentage = elitePercentage;
+    this.populationSize = params.getPopulationSize();
+    this.numberOfPopulation = params.getNumberOfPopulation();
+    this.crossPercentage = params.getCrossPercentage();
+    this.mutatePercentage = params.getMutatePercentage();
+    this.tour = params.getTour();
+    this.elitePercentage = params.getElitePercentage();
     this.writer = writer;
   }
 
@@ -38,6 +38,9 @@ public class EvolutionaryAlgorithm {
     evaluate(firstPopulation, 1);
 
     for (int i = 0; i < numberOfPopulation - 1; i++) {
+      if (i > 0) {
+        populations.set(i - 1, null);
+      }
       List<Individual> elite = elite(populations.get(i));
       List<Individual> nextPopulation = selection(populations.get(i));
       nextPopulation = crossover(nextPopulation);
@@ -77,8 +80,7 @@ public class EvolutionaryAlgorithm {
       if (best > distance) {
         best = distance;
         bestSolution = individual;
-      }
-      else if (worst < distance)
+      } else if (worst < distance)
         worst = distance;
     }
     double avg = sum / population.size();
